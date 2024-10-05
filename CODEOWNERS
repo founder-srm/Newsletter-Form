@@ -1,0 +1,20 @@
+# Owners for specific directories
+.github/ @greeenboi
+.million/ @greeenboi
+.vscode/ @greeenboi
+.wrangler/ @greeenboi
+
+# Owners for specific files
+.gitignore @greeenboi
+eslint.config.js @greeenboi
+index.html @greeenboi
+package.json @greeenboi
+pnpm-lock.yaml @greeenboi
+README.md @greeenboi
+tsconfig.app.json @greeenboi
+tsconfig.json @greeenboi
+tsconfig.node.json @greeenboi
+vite.config.ts @greeenboi
+
+# Owners for src directory
+src/assets/ @greeenboi
