@@ -28,6 +28,5 @@ dist-ssr
 
 # Deployment dirs
 dist
-tsconfig.app*
-tsconfig.node*
+tsconfig*
 
