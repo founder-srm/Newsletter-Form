@@ -1,35 +1,76 @@
+
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
+import { supabase } from './lib/supabase'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState<'default' | 'success' | 'error'>('default')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('default')
+  
+    const { data: existingUser, error: checkError } = await supabase
+      .from('newsletter')
+      .select('*')
+      .eq('email', email)
+  
+    if (checkError) {
+      setStatus('error')
+      setErrorMessage('An error occurred while checking the email.')
+      return
+    }
+  
+    if (existingUser && existingUser.length > 0) {
+      setStatus('error')
+      setErrorMessage('This email is already subscribed.')
+      return
+    }
+  
+    const { error } = await supabase
+      .from('newsletter')
+      .insert([{ name, email }])
+  
+    if (error) {
+      setStatus('error')
+      setErrorMessage('An error occurred while submitting the form.')
+    } else {
+      setStatus('success')
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      <h1>Subscribe to our Newsletter</h1>
+      {status === 'default' && (
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button type="submit">Subscribe</button>
+        </form>
+      )}
+      {status === 'success' && <p>Thank you for subscribing!</p>}
+      {status === 'error' && <p style={{ color: 'red' }}>{errorMessage}</p>}
+    </div>
   )
 }
 
 export default App
+
+
